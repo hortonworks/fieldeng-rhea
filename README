@@ -1,0 +1,3 @@
+git pull
+mvn package docker:build
+docker run -p 8080:8080 -e HOST_NAME=kirk2 -e TEST_PARAM=fff hortonworks/historian

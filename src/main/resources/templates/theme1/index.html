@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+
+    <title>Historian | Home</title>
+
+    <link href="theme1/css/bootstrap.min.css" rel="stylesheet"></link>
+    <link href="theme1/font-awesome/css/font-awesome.css" rel="stylesheet"></link>
+	<link href="theme1/css/plugins/jsTree/style.min.css" rel="stylesheet"></link>
+    <link href="theme1/css/plugins/switchery/switchery.css" rel="stylesheet"></link>
+    <link href="theme1/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet"></link>
+    <link href="theme1/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    
+    
+    
+    <link href="theme1/css/animate.css" rel="stylesheet"></link>
+    <link href="theme1/css/style.css" rel="stylesheet"></link>
+    
+    <link rel="stylesheet" href="theme1/js/jquery-ui-1.12.1/jquery-ui.css"></link>
+
+
+    <style>
+  
+    
+    #autocomplete {
+	background-image: url('theme1/img/searchicon.png'); /* Add a search icon to input */
+    background-position: 10px 8px; /* Position the search icon */
+    background-repeat: no-repeat; /* Do not repeat the icon image */
+      font-size: 18px;
+  padding: 6px 6px 6px 40px;
+  /*border: 1px solid #ddd;*/
+  margin-bottom: 12px;
+  margin:0 auto;
+  height:40px;
+}
+
+    </style>
+
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+
+
+<div id="" class="gray-bg"> <!-- id=page-wrapper -->
+<div class="row border-bottom">
+   
+</div>
+<div class="row wrapper border-bottom white-bg page-heading">
+    
+    <!--  <div class="col-lg-2">
+
+    </div> -->
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    <div class="row">
+               <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Atlas Explorer</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                       
+                    </div>
+                </div>
+                
+                
+                 <div class="ibox-title">
+                   
+                 <!-- 
+				  <table>
+				    <tr>
+				      <td><label for="autocomplete" style="font-size:large;"></label></td>
+				      <td><input id="autocomplete"  class="form-control" style="width:230px;"></td>
+				      <td><button class="btn btn-default" onclick="getTable(document.getElementById('autocomplete').value)">Select</button></td>
+				    </tr>
+				  </table>
+<input type="text" id="myInput" class="form-control" style="width:400px;" onkeyup="filter()" placeholder="Search for datasets">
+                   -->
+                   <input value="" style="box-shadow:inset 0 0 4px #eee; width:220px; margin:0; padding:6px 12px; border-radius:4px; border:1px solid silver; font-size:1.1em;" id="demo_q" placeholder="Search" type="text">
+                   
+                   
+                   
+                </div>
+                
+                <div class="ibox-content">
+		
+                    <div id="using_json"></div>
+
+                </div>
+            </div>
+        </div>
+
+        		  <div class="col-lg-9">
+        		  <div class="ibox float-e-margins">
+        		   <div class="ibox-content">
+              
+              <div class="checkbox checkbox-primary checkbox-inline">
+                <input type="checkbox" id="checkbox0" onclick="getTsFunction(this,0,'value')" checked />
+                <label for="checkbox1">Value</label>
+              </div>
+              
+              <div class="checkbox checkbox-primary checkbox-inline">
+                <input type="checkbox" id="checkbox1" onclick="getTsFunction(this,1,'mov_avg')" />
+                <label for="checkbox1">Moving Avg</label>
+              </div>
+              <div class="checkbox checkbox-primary checkbox-inline">
+                <input type="checkbox" id="checkbox2" onclick="getTsFunction(this,2,'sum')"/>
+                <label for="checkbox2">Sum</label>
+              </div>
+                            <div class="checkbox checkbox-primary checkbox-inline">
+                <input type="checkbox" id="checkbox3" onclick="getTsFunction(this,3,'min')" />
+                <label for="checkbox3">Min</label>
+              </div>
+                            <div class="checkbox checkbox-primary checkbox-inline">
+                <input type="checkbox" id="checkbox4" onclick="getTsFunction(this,4,'max')" />
+                <label for="checkbox4">Max</label>
+              </div>
+            
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" class="js-switch js-check-change" nochecked />
+               <button onclick="findPattern()" class="btn btn-default">Find Pattern</button>
+                
+              <div class="" style="display: inline-block;" id="data_5">
+             
+             <div class="input-daterange input-group" id="datepicker">
+                                    <input type="text" class="input-sm form-control" id="sdate" name="start" value="06/01/2017">
+                                    <span class="input-group-addon">to</span>
+                                    <input type="text" class="input-sm form-control" id ="edate" name="end" value="06/05/2017">
+                                </div>
+                                </div>
+                                
+              
+                                
+                              
+                                     <select class="form-control m-b" id="timezone" name="timezone" onchange="changeTimeZone()" style="width:100px; display: inline-block;">
+                                <option value="UTC" >UTC</option>
+                                <option value="LOCAL">LOCAL</option>
+                                
+                                </select>
+
+                                       
+                            
+                   
+             
+            </div>
+            </div>
+        		  
+     				<div id="container" style="min-width: 310px; max-width:1600px; height: 410px; max-height:1210px; margin: 0 auto"></div>
+     				<div class="row">
+     				  <div id ="patternmatch" style=" min-width: 210px; max-width:800px; height: 410px; max-height:110px; margin: 0 auto" ></div>
+     				   <div id ="pattern" style=" min-width: 210px; max-width:800px; height: 410px; max-height:110px; margin: 0 auto" ></div>
+     				</div>
+        		</div>
+        		
+        
+    </div>
+
+
+<form id="selectionPoints" name="selectionPoints">
+ <input type="hidden" id="xmin" name="xmin" value="" />
+ <input type="hidden" id="xmax" name="xmax" value="" />
+</form>
+
+</div>
+<div class="footer">
+    <div class="pull-right">
+       
+    </div>
+    <div>
+      
+    </div>
+</div>
+
+</div>
+</div>
+
+
+<!-- Mainly scripts -->
+<script src="theme1/js/jquery-3.1.1.min.js"></script>
+<script src="theme1/js/bootstrap.min.js"></script>
+<script src="theme1/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="theme1/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="theme1/js/inspinia.js"></script>
+<script src="theme1/js/plugins/pace/pace.min.js"></script>
+
+
+
+<script src="theme1/js/plugins/jsTree/jstree.min.js"></script>
+
+<script src="theme1/js/highcharts/highcharts.js"></script>
+<script src="theme1/js/highcharts/heatmap.js"></script>
+<script src="theme1/js/highcharts/exporting.js"></script>
+<!-- <script src="theme1/js/highcharts/highstock.js"></script> -->
+<script src="theme1/js/highcharts/highcharts-more.js"></script>
+
+
+   <!-- Switchery -->
+   <script src="theme1/js/plugins/switchery/switchery.js"></script>
+   
+   <script src="theme1/js/jquery-ui-1.12.1/jquery-ui.js"></script>
+   
+      <!-- Data picker -->
+   <script src="theme1/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+   
+
+<script>
+
+$('#data_5 .input-daterange').datepicker({
+    keyboardNavigation: false,
+    forceParse: false,
+    autoclose: true
+});
+
+</script>
+
+<script>
+
+var zoom = true;
+
+$(document).ready(function () {
+var elem = document.querySelector('.js-switch');
+elem.checked=false;
+var switchery = new Switchery(elem, { color: '#1AB394' });
+
+var changeCheckbox = document.querySelector('.js-check-change')
+
+changeCheckbox.onchange = function() {
+	if (zoom) {
+		zoom = false;
+	}
+	else {
+		zoom = true;
+		
+		rectangle.attr({
+	        x: 0,
+	        y: 0,
+	        width: 0,
+	        height: 0
+	    });
+		
+	}
+};
+
+
+});
+
+
+
+</script>
+
+
+
+<style>
+    .jstree-open > .jstree-anchor > .fa-folder:before {
+        content: "\f07c";
+    }
+
+    .jstree-default .jstree-icon.none {
+        width: 0;
+    }
+</style>
+
+<script>
+    $(document).ready(function(){
+
+        $('#jstree1').jstree({
+            'core' : {
+                'check_callback' : true
+            },
+            'plugins' : [ 'types', 'dnd' ],
+            'types' : {
+                'default' : {
+                    'icon' : 'fa fa-folder'
+                },
+                'html' : {
+                    'icon' : 'fa fa-file-code-o'
+                },
+                'svg' : {
+                    'icon' : 'fa fa-file-picture-o'
+                },
+                'css' : {
+                    'icon' : 'fa fa-file-code-o'
+                },
+                'img' : {
+                    'icon' : 'fa fa-file-image-o'
+                },
+                'js' : {
+                    'icon' : 'fa fa-file-text-o'
+                }
+
+            }
+        });
+
+
+    });
+</script>
+
+<script>
+					
+						
+$(function () {
+	var to = false;
+	$('#demo_q').keyup(function () {
+		if(to) { clearTimeout(to); }
+		to = setTimeout(function () {
+			var v = $('#demo_q').val();
+			$('#using_json').jstree(true).search(v);
+		}, 250);
+	});
+});
+
+					
+						
+</script>
+
+<script>
+
+/* Global / Page level variables */
+var tagsG;
+var sdateG;
+var edateG;
+var granG = "minute";
+var funcG;
+
+
+
+var series; 
+var xAxisLabels;
+
+var tree1;
+$.get("/getfiletree", function(tree) {
+
+	tree1 = tree;
+	console.log(tree);
+	
+	//tree1.core = { label: "Hello", url: "#hello" };
+	$.extend(tree, {
+		'plugins' : [ 'types', 'dnd', 'search' ],
+        'types' : {
+            'default' : {
+                'icon' : 'fa fa-folder'
+            },
+            'html' : {
+                'icon' : 'fa fa-file-code-o'
+            },
+            'svg' : {
+                'icon' : 'fa fa-file-picture-o'
+            },
+            'css' : {
+                'icon' : 'fa fa-file-code-o'
+            },
+            'img' : {
+                'icon' : 'fa fa-file-image-o'
+            },
+            'js' : {
+                'icon' : 'fa fa-file-text-o'
+            }
+        }
+	});
+	
+	$('#using_json').on("select_node.jstree", function (e, data) { 
+				console.log("node: " + data.node.text);
+				tagsG = data.node.text;
+				var elem =document.getElementById('checkbox0');
+				getTsFunction(elem, 0, "sum"); //  "2017-04-23_00:00:00", "2017-05-03_00:00:00", "sum", "minute");
+				
+	}); 
+	
+	 $('#using_json').jstree(tree);
+});
+
+
+
+
+function getTsFunction(elem, i, func) {
+		
+	
+	if (elem.checked == true) {
+		getTs(tagsG, null, null, func, "minute");
+	}
+	else {
+		stream2.series[i].setData([], true);
+	}
+	
+		
+		
+}
+
+function getTs( tags, sdate, edate, func, gran) {
+
+	if (tags == null || tags == "null") {
+	tagsG = tags;
+	}
+	sdateG = sdate;
+	edateG = edate;
+	funcG = func;
+	if (gran == null || tags == "null") {
+		granG = gran;
+	}
+		
+	var url = "/getts?tags="+tags+"&sdate="+$('#sdate').val()+"&edate="+$('#edate').val()+"&function="+func+"&granularity="+gran;
+	console.log(url);
+	
+	$.get(url , function(tsData) {
+		//stream2.series[0].setData(stream.baseline,true);
+		console.log(tsData);
+		
+		var i = 0;
+		if ("mov_avg" == func) {
+			i=1;
+		}
+		/*if ("sum" == func) {
+			i=2;
+		}*/
+		if ("min" == func) {
+			i=3;
+		}
+		if ("max" == func) {
+			i=4;
+		}
+		
+		stream2.series[i].setData(tsData,true);
+		stream2.setTitle(tags, null, true);
+		stream2.setTitle({ text: tags });
+	});
+}
+
+</script>
+
+
+
+
+<script type="text/javascript">
+
+function getMovAvg(elem) {
+	
+	console.log(elem.checked);
+	if (elem.checked == true) {
+		$.get("/getmovavg", function(tsData) {
+			console.log(tsData);
+			stream2.series[1].setData(tsData,true);	
+		});
+	}
+	else {
+		//elem.checked = false;
+		stream2.series[1].setData([], true);
+	}
+}
+
+
+function getMax(elem) {
+	
+	console.log(elem.checked);
+	if (elem.checked == true) {
+	
+	$.get("/getmax", function(tsData) {
+		console.log(tsData);
+		stream2.series[2].setData(tsData,true);	
+		
+		});
+	}
+	else {
+		stream2.series[2].setData([], true);
+	}
+}
+
+function getMin() {
+	$.get("/getmin", function(tsData) {
+		console.log(tsData);
+		stream2.series[3].setData(tsData,true);	
+		
+		});
+}
+
+function getValue() {
+	$.get("/getvalue", function(tsData) {
+		console.log(tsData);
+		stream2.series[4].setData(tsData,true);	
+		
+		});
+}
+
+
+function changeTimeZone() {
+	
+	 var tz = document.getElementById("timezone").value;
+	 console.log(tz);
+	    //document.getElementById("demo").innerHTML = "You selected: " + x;
+	
+	   if ("LOCAL" == tz ){
+		   useUTCG = false;
+	   } 
+		   if ("UTC" == tz) {
+			   useUTCG = true;
+		   }
+		   
+	/*    
+	if (tz == "EST") {
+	 timezone=5*60;
+	}
+	if (tz == "PST") {
+		 timezone=5*60;
+	}
+	if (tz =="UTC") {
+		timezone=0;	
+	}*/
+	
+	Highcharts.setOptions({
+	    global: {
+	        useUTC: useUTCG
+	    }
+	});
+	
+	stream2.destroy();
+
+	showChart();
+    //Highcharts.chart('container', stream2);
+	
+}
+
+var f;
+var timezone=0;
+var useUTCG = true;
+var stream2;
+showChart();
+function showChart() {
+	
+
+	stream2 = Highcharts.chart('container',{
+		chart: {
+		    zoomType:'x',
+			//renderTo: 'stream2',
+	        type: 'areaspline',
+	        events: {
+	                selection: grabPoints 
+	        }
+	            
+	        },        
+	        
+	        exporting : {
+						enabled : false
+			},
+	        title: {
+	            text: ''
+	        },
+	        legend: {
+	        	
+	      	       enabled: false
+	            
+	        },
+	        xAxis: {
+	        	type: 'datetime',
+	            categories: xAxisLabels 
+	          
+	        },
+	        yAxis: {
+	            title: {
+	                text: ''//'Precision'
+	            },
+	            gridLineWidth: 0,
+	  					minorGridLineWidth: 0,
+	               labels: {
+	       enabled: false
+	   },
+	        },
+
+	        credits: {
+	            enabled: false
+	        },
+	        plotOptions: {
+	            areaspline: {
+	                fillOpacity: 0.2
+	            },
+	            line: {
+	                    marker: {
+	                        enabled: false
+	                    }
+	                }
+	        },
+	        series: [
+			{
+	            name: 'Sum',
+	            color:'#25B799',// '#5EC3B5', //color: '#1CA8DD',
+	            //data: [4, 3, 5, 3, 4, 5, 3] ,//series, //[4, 3, 5, 3, 4, 5, 3],
+	            lineWidth:2
+	        },
+            {
+	            name: 'Mov Avg',
+	           // data: [5, 4, 4, 4, 3, 4, 4],
+	            color: '#ccc',
+	            type: 'line',
+	            opacity:0.2,
+	            lineWidth:2
+	            //dashStyle:'dash'
+	        	
+	        },
+	           {
+	            name: 'Max',
+	           // data: [5, 4, 4, 4, 3, 4, 4],
+	            color: '#ccc',
+	            type: 'line',
+	            opacity:0.2,
+	            lineWidth:2
+	            //dashStyle:'dash'
+	        	
+	        },
+	           {
+	            name: 'Min',
+	           // data: [5, 4, 4, 4, 3, 4, 4],
+	            color: '#ccc',
+	            type: 'line',
+	            opacity:0.2,
+	            lineWidth:2
+	            //dashStyle:'dash'
+	        	
+	        },
+	           {
+	            name: 'Value',
+	            //data: [5, 4, 4, 4, 3, 4, 4],
+	            color: '#ccc',
+	            type: 'line',
+	            opacity:0.2,
+	            lineWidth:2
+	            //dashStyle:'dash'
+	        	
+	        }
+			]
+	    });
+	    
+rectangle = stream2.renderer.rect(0,0,0,0,0).css({
+    stroke: '#2F4050',
+    strokeWidth: '.5',
+    fill: '#2F4050',
+    fillOpacity: '.1'
+}).add();
+
+}
+
+
+
+
+function showChart1() {
+	
+
+	pattern = Highcharts.chart('pattern',{
+		chart: {
+		    zoomType:'x',
+			//renderTo: 'stream2',
+	        type: 'areaspline',
+	        events: {
+	                selection: grabPoints 
+	        }
+	            
+	        },        
+	        
+	        exporting : {
+						enabled : false
+			},
+	        title: {
+	            text: ''
+	        },
+	        legend: {
+	        	
+	      	       enabled: false
+	            
+	        },
+	        xAxis: {
+	        	type: 'datetime',
+	            categories: xAxisLabels 
+	          
+	        },
+	        yAxis: {
+	            title: {
+	                text: ''//'Precision'
+	            },
+	            gridLineWidth: 0,
+	  					minorGridLineWidth: 0,
+	               labels: {
+	       enabled: false
+	   },
+	        },
+
+	        credits: {
+	            enabled: false
+	        },
+	        plotOptions: {
+	            areaspline: {
+	                fillOpacity: 0.2
+	            },
+	            line: {
+	                    marker: {
+	                        enabled: false
+	                    }
+	                }
+	        },
+	        series: [
+			{
+	            name: 'value',
+	            color:'#25B799',// '#5EC3B5', //color: '#1CA8DD',
+	            //data: [4, 3, 5, 3, 4, 5, 3] ,//series, //[4, 3, 5, 3, 4, 5, 3],
+	            lineWidth:2
+	        }
+  
+			]
+	    });
+	    
+
+
+}
+
+
+
+
+
+
+
+
+var gg;
+
+var xMinSelection;
+var xMaxSelection;
+
+function grabPoints(event) {
+	
+	gg = event;
+	
+	if (!zoom) {
+	
+    var xMin = stream2.xAxis[0].translate((event.xAxis[0]||stream2.xAxis[0]).min),
+        xMax = stream2.xAxis[0].translate((event.xAxis[0]||stream2.xAxis[0]).max),
+        yMin = stream2.yAxis[0].translate((event.yAxis[0]||stream2.yAxis[0]).min),
+        yMax = stream2.yAxis[0].translate((event.yAxis[0]||stream2.yAxis[0]).max);
+
+	
+	    console.log(event.xAxis[0].min);
+	    console.log(event.xAxis[0].max);
+	    xMinSelection = event.xAxis[0].min;
+	    xMaxSelection = event.xAxis[0].max;	    
+    
+    rectangle.attr({
+        x: xMin + stream2.plotLeft,
+        y: stream2.plotHeight + stream2.plotTop - yMax,
+        width: xMax - xMin,
+        height: yMax - yMin
+    });
+    
+    return false;
+	}
+	
+	else {
+		return true;
+	}
+	
+}
+
+
+function findPattern() {
+	
+	
+  $.get("/findpattern?tags="+tagsG+"&sdate="+$('#sdate').val()+"&edate="+$('#edate').val()+"&function="+funcG+"&granularity="+granG+"&psdate="+xMinSelection+"&pedate="+xMaxSelection, 
+		  function(rs) {
+	
+	
+	console.log(rs);
+	
+	document.getElementById("patternmatch").append(rs);
+	
+	showChart1();
+	pattern.series[0].setData(rs,true);
+	
+	
+	});
+}
+
+
+
+function chartSelection() {
+	if (zoom) {
+		zoom = false;
+	}
+	else {
+		zoom = true;
+		
+		rectangle.attr({
+	        x: 0,
+	        y: 0,
+	        width: 0,
+	        height: 0
+	    });
+		
+	}
+	
+}
+
+</script>
+
+
+
+
+</body>
+
+</html>

@@ -15,7 +15,11 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,18 +33,32 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
-import com.hortonworks.historian.domain.AppProps;
 import com.hortonworks.historian.model.Atlas;
 
-
-@RestController
 @Component
-public class Controller {
+@RestController
+public class Controller{
 	static final Logger LOG = LoggerFactory.getLogger(Controller.class);
-	static final String server = "http://historian03-499-1-0.field.hortonworks.com:8055";
 	
-	@Autowired
-	AppProps ap;
+	@Value("${historian.api.host}")
+	private String historianApiHost;
+	
+	@Value("${historian.api.port}")
+	private String historianApiPort;
+	
+	private String server = "http://"+historianApiHost+":"+historianApiPort;
+	
+	public Controller() {
+		Map<String, String> env = System.getenv();
+        if(env.get("API_HOST") != null){
+        	historianApiHost = (String)env.get("API_HOST");
+        }
+        if(env.get("API_PORT") != null){
+        	historianApiPort = (String)env.get("API_PORT");
+        }
+        server = "http://"+historianApiHost+":"+historianApiPort;
+        System.out.println("********************** Controller ()  API url set tp: " + server);
+	}
 	
     @RequestMapping(value="/search", produces = { MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<List<String>> search(@RequestParam(value="term") String text) {
@@ -68,6 +86,7 @@ public class Controller {
 
     @RequestMapping(value="/test1", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
     public HashMap<String, Object> tablestats() {
+
     	
     	HashMap<String, Object> coreHm = new HashMap<String, Object>();
     	HashMap<String, Object> dataHm = new HashMap<String, Object>();
@@ -96,7 +115,6 @@ public class Controller {
     @RequestMapping(value="/gettimeseries", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
     public List<Object[]>  getTimeSeries() throws ParseException {
     	
-    
     	List<Object[]> tsList = new ArrayList<Object[]>();
     	    	
     	RestTemplate rt = new RestTemplate();
@@ -332,8 +350,6 @@ public class Controller {
     		@RequestParam(value="function") String function,
     		@RequestParam(value="granularity") String granularity) throws ParseException {
     	
-    	
-    	System.out.println(ap.getHostName());
     	
     	if (sdate.isEmpty()) {
     		Calendar cal = Calendar.getInstance();

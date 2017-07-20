@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.hortonworks</groupId>
-	<artifactId>historian</artifactId>
+	<artifactId>rhea</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
-	<name>Historian</name>
+	<name>Rhea</name>
 	<description>Time Series Historian Project</description>
 
 	<parent>

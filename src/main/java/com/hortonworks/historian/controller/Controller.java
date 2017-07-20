@@ -390,7 +390,7 @@ public class Controller{
 	        	String[] cols = row.split(Pattern.quote(","));	        	
 	        	Date d  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(cols[0]);
 	        	objRow[0] = d.getTime();
-	        	objRow[1] = Double.parseDouble(cols[2]);
+	        	objRow[1] = Double.parseDouble(cols[1]);
 	        	tsList.add(objRow);
         	}
         	count++;

@@ -4,20 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.hortonworks</groupId>
-<<<<<<< HEAD
 	<artifactId>fieldeng-rhea</artifactId>
-=======
-	<artifactId>rhea</artifactId>
->>>>>>> 2000d3b8b6388143833048951572b70e2c7e27e9
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>Rhea</name>
-<<<<<<< HEAD
 	<description>Time Series Rhea Project</description>
-=======
-	<description>Time Series Historian Project</description>
->>>>>>> 2000d3b8b6388143833048951572b70e2c7e27e9
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

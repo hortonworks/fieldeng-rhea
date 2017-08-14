@@ -15,7 +15,11 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,18 +33,32 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
-import com.hortonworks.historian.domain.AppProps;
 import com.hortonworks.historian.model.Atlas;
 
-
-@RestController
 @Component
-public class Controller {
+@RestController
+public class Controller{
 	static final Logger LOG = LoggerFactory.getLogger(Controller.class);
-	static final String server = "http://historian03-499-1-0.field.hortonworks.com:8055";
 	
-	@Autowired
-	AppProps ap;
+	@Value("${historian.api.host}")
+	private String historianApiHost;
+	
+	@Value("${historian.api.port}")
+	private String historianApiPort;
+	
+	private String server = "http://"+historianApiHost+":"+historianApiPort;
+	
+	public Controller() {
+		Map<String, String> env = System.getenv();
+        if(env.get("API_HOST") != null){
+        	historianApiHost = (String)env.get("API_HOST");
+        }
+        if(env.get("API_PORT") != null){
+        	historianApiPort = (String)env.get("API_PORT");
+        }
+        server = "http://"+historianApiHost+":"+historianApiPort;
+        System.out.println("********************** Controller ()  API url set tp: " + server);
+	}
 	
     @RequestMapping(value="/search", produces = { MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<List<String>> search(@RequestParam(value="term") String text) {
@@ -68,6 +86,7 @@ public class Controller {
 
     @RequestMapping(value="/test1", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
     public HashMap<String, Object> tablestats() {
+
     	
     	HashMap<String, Object> coreHm = new HashMap<String, Object>();
     	HashMap<String, Object> dataHm = new HashMap<String, Object>();
@@ -96,7 +115,6 @@ public class Controller {
     @RequestMapping(value="/gettimeseries", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
     public List<Object[]>  getTimeSeries() throws ParseException {
     	
-    
     	List<Object[]> tsList = new ArrayList<Object[]>();
     	    	
     	RestTemplate rt = new RestTemplate();
@@ -245,7 +263,7 @@ public class Controller {
     
     //http://localhost:8080/findpattern?tags=mpg_truck_a&sdate=2017-04-23_00:00:00&edate=2017-05-03_00:00:00&function=sum&granularity=minute&psdate=1493096940000&pedate=1493099990590.072
     @RequestMapping(value="/findpattern", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
-    public String  findPattern(
+    public List<List<List>>  findPattern(
     		@RequestParam(value="tags") String tags, 
     		@RequestParam(value="sdate") String sdate, 
     		@RequestParam(value="edate") String edate , 
@@ -254,6 +272,7 @@ public class Controller {
     		@RequestParam(value="psdate") String pSDate, 
     		@RequestParam(value="pedate") String pEDate ) throws ParseException {
     	
+    	List<List<List>> allMatches = new ArrayList();
     	
     	String millisS ="";
     	String millisE = "";
@@ -314,13 +333,44 @@ public class Controller {
       //  String[] ds = response.getBody().split(Pattern.quote("********************"));
         //for (String row : ds) {
         	
-        //{"text\/plain":"[[1497728580000,37.5],[1497728640000,31.04573631286621],[1497728700000,34.739479064941406],
+        // [[1497728580000,37.5],[1497728640000,31.04573631286621],[1497728700000,34.739479064941406]]
 	        	System.out.println(response);
         //}
 	        	
-        String[] dd = response.getBody().split(Pattern.quote("plain\":\""));
-	      String array = 	dd[1].substring(0, dd[1].length() -5 ) + "]";
-    	return array;
+	    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	    //2017-07-25 00:20:00.0,65.25
+	        	
+        String[] dd = response.getBody().split(Pattern.quote("plain\":\"["));
+        String[] matchesArr = dd[1].split(Pattern.quote("],"));
+       
+        for (String match : matchesArr) {
+        	 	
+        	
+        	String[] cols = match.split(Pattern.quote("|"));
+        	for (String col : cols) {
+        		List<List> matches = new ArrayList<List>(); 	
+        		String[] colArr = col.split(Pattern.quote("?"));
+        		
+        		for (String c : colArr) {
+        			
+        		String values[] = c.split(Pattern.quote(","));
+        		if (values != null && values.length >= 2) {
+        			List l = new ArrayList();
+        			l.add(df.parse(values[1]).getTime());
+                	l.add(Double.parseDouble(values[2].replace(")", "") .replace("]", "") ));
+                	matches.add(l);
+        		}
+        		
+        		}
+        		System.out.println(col);
+        		allMatches.add(matches);
+        	}
+        	
+        	
+        }
+        
+	      //String array = 	dd[1].substring(0, dd[1].length() -5 ) + "]";
+    	return allMatches;
     }
  
     
@@ -332,8 +382,6 @@ public class Controller {
     		@RequestParam(value="function") String function,
     		@RequestParam(value="granularity") String granularity) throws ParseException {
     	
-    	
-    	System.out.println(ap.getHostName());
     	
     	if (sdate.isEmpty()) {
     		Calendar cal = Calendar.getInstance();

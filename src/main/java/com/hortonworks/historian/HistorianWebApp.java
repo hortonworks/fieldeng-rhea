@@ -17,11 +17,12 @@ public class HistorianWebApp {
 		AppProps props = (AppProps) app.getBean(AppProps.class);
 		System.out.println(props.getHostName());
 		
+		System.out.println(props.getHistorianApiHost());
+		System.out.println(props.getHistorianApiPort());
+		
 		System.out.println(props.getAltasHost());
 		System.out.println(props.getAltasPort());
 		
-		Atlas.atlasHost = props.getAltasHost();
-		Atlas.atlasPort = props.getAltasPort(); // 2nd best way or , should be done in atlas class but close second.
 		
 		Atlas.init();
 		

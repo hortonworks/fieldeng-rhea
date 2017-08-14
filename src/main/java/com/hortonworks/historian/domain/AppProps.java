@@ -21,6 +21,11 @@ public class AppProps {
 	@Value("${atlas.api}")
 	private String altasApi;
 
+	@Value("${historian.api.host}")
+	private String historianApiHost;
+	
+	@Value("${historian.api.port}")
+	private String historianApiPort;
 	
 	 public String getAltasPort() {
 		return altasPort;
@@ -75,5 +80,25 @@ public class AppProps {
 	public void print() {
 		    System.out.println(hostName);
 		  }
+
+
+	public String getHistorianApiPort() {
+		return historianApiPort;
+	}
+
+
+	public void setHistorianApiPort(String historianApiPort) {
+		this.historianApiPort = historianApiPort;
+	}
+
+
+	public String getHistorianApiHost() {
+		return historianApiHost;
+	}
+
+
+	public void setHistorianApiHost(String historianApiHost) {
+		this.historianApiHost = historianApiHost;
+	}
 	
 }

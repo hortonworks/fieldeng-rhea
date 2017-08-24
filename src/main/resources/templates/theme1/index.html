@@ -159,6 +159,10 @@
      				<div class="row">
      				  <div id ="patternmatch" style=" min-width: 210px; max-width:800px; height: 410px; max-height:110px; margin: 0 auto" ></div>
      				   <div id ="pattern" style=" min-width: 210px; max-width:800px; height: 410px; max-height:110px; margin: 0 auto" ></div>
+     				   
+     				   <div id="patternWrapper">
+     				   </div>
+     				   
      				</div>
         		</div>
         		
@@ -775,11 +779,93 @@ function findPattern() {
 	
 	console.log(rs);
 	
+	var count =0;
+	$.each( rs, function( key, value ) {
+		console.log(value);
+		
+		count = count+1;
+		
+		var name = "pattern"+count;
+		
+		console.log(name);
+		$("#patternWrapper").append("<br/><div id="+name+"></div>");
+		
+		var pattern = Highcharts.chart(name,{
+			chart: {
+			    zoomType:'x',
+				//renderTo: 'stream2',
+		        type: 'areaspline',
+		        events: {
+		                selection: grabPoints 
+		        }
+		            
+		        },        
+		        
+		        exporting : {
+							enabled : false
+				},
+		        title: {
+		            text: ''
+		        },
+		        legend: {
+		        	
+		      	       enabled: false
+		            
+		        },
+		        xAxis: {
+		        	type: 'datetime',
+		            categories: xAxisLabels 
+		          
+		        },
+		        yAxis: {
+		            title: {
+		                text: ''//'Precision'
+		            },
+		            gridLineWidth: 0,
+		  					minorGridLineWidth: 0,
+		               labels: {
+		       enabled: false
+		   },
+		        },
+
+		        credits: {
+		            enabled: false
+		        },
+		        plotOptions: {
+		            areaspline: {
+		                fillOpacity: 0.2
+		            },
+		            line: {
+		                    marker: {
+		                        enabled: false
+		                    }
+		                }
+		        },
+		        series: [
+				{
+		            name: 'value',
+		            color:'#25B799',// '#5EC3B5', //color: '#1CA8DD',
+		            //data: [4, 3, 5, 3, 4, 5, 3] ,//series, //[4, 3, 5, 3, 4, 5, 3],
+		            lineWidth:2
+		        }
+	  
+				]
+		    });
+		
+		
+		
+		
+		//patternWrapper
+		pattern.series[0].setData(value,true);
+		
+		
+	});
+	/*
 	document.getElementById("patternmatch").append(rs);
 	
 	showChart1();
 	pattern.series[0].setData(rs,true);
-	
+	*/
 	
 	});
 }

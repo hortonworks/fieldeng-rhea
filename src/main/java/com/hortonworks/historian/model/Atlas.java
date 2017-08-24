@@ -9,21 +9,15 @@ import java.util.Map;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import com.hortonworks.historian.domain.AppProps;
-
 import scala.util.parsing.json.JSON;
 
 public abstract class Atlas {
 
-	@Autowired
-	AppProps ap;
-	
 	public static List<AtlasItem> atlasCache = new ArrayList<AtlasItem>();
 	public static HashMap<String, Object> atlasFileTree = new HashMap<String, Object>();
 	public static String atlasHost = "localhost";

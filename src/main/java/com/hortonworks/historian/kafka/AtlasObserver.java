@@ -153,7 +153,9 @@ public class AtlasObserver implements Runnable {
 					if(operationType.equalsIgnoreCase("TRAIT_ADD")){
 						updatedNode.add(entity);
 					}else if(operationType.equalsIgnoreCase("TRAIT_DELETE")){
-						updatedNode.remove(updatedNode.indexOf(entity));	
+						if(updatedNode.indexOf(entity) > -1){
+							updatedNode.remove(updatedNode.indexOf(entity));
+						}
 					}
 					return updatedNode;
 				}else{

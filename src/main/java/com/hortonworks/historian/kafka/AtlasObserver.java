@@ -75,9 +75,13 @@ public class AtlasObserver implements Runnable {
 						System.out.println("********** Detecting Added Classificaition: " + traitArray);
 						targetLeaf = traitArray.get(0);
 					}else if(typeName.equalsIgnoreCase(typeName) && operationType.equalsIgnoreCase("TRAIT_DELETE")){
-						((Collection<?>) Atlas.tagsTaxMapping.get(entityName)).removeAll(traitArray);
-						System.out.println("********** Detecting Deleted Classificaition: " + Atlas.tagsTaxMapping.get(entityName));
-						targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
+						if(traitArray.size() > 0){
+							((Collection<?>) Atlas.tagsTaxMapping.get(entityName)).removeAll(traitArray);
+							System.out.println("********** Detecting Deleted Classificaition: " + Atlas.tagsTaxMapping.get(entityName));
+							targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
+						}else{
+							System.out.println("********** There are no Classifications assigned to this tag, skipping delete...");
+						}
 					}
 						
 					List<Map<String,Object>> currentNode = (List<Map<String, Object>>) ((HashMap)Atlas.atlasFileTree.get("core")).get("data");

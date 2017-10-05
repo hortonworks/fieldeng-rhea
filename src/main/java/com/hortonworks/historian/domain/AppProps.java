@@ -27,6 +27,18 @@ public class AppProps {
 	@Value("${historian.api.port}")
 	private String historianApiPort;
 	
+	//@Value("${kafka.host}")
+	private String kafkaHost;
+	
+	//@Value("${kafka.port}")
+	private String kafkaPort;
+	
+	//@Value("${zk.host}")
+	private String zkHost;
+	
+	//@Value("${zk.port}")
+	private String zkPort;
+	
 	 public String getAltasPort() {
 		return altasPort;
 	}
@@ -99,6 +111,46 @@ public class AppProps {
 
 	public void setHistorianApiHost(String historianApiHost) {
 		this.historianApiHost = historianApiHost;
+	}
+
+
+	public String getKafkaPort() {
+		return kafkaPort;
+	}
+
+
+	public void setKafkaPort(String kafkaPort) {
+		this.kafkaPort = kafkaPort;
+	}
+
+
+	public String getKafkaHost() {
+		return kafkaHost;
+	}
+
+
+	public void setKafkaHost(String kafkaHost) {
+		this.kafkaHost = kafkaHost;
+	}
+
+
+	public String getZkHost() {
+		return zkHost;
+	}
+
+
+	public void setZkHost(String zkHost) {
+		this.zkHost = zkHost;
+	}
+
+
+	public String getZkPort() {
+		return zkPort;
+	}
+
+
+	public void setZkPort(String zkPort) {
+		this.zkPort = zkPort;
 	}
 	
 }

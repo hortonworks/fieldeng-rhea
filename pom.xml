@@ -50,14 +50,17 @@
     <version>0.7.1-incubating</version>
 </dependency>
 		
-
-
 <dependency>
     <groupId>org.apache.atlas</groupId>
     <artifactId>atlas-catalog</artifactId>
     <version>0.7.1-incubating</version>
 </dependency>
 
+<dependency>
+ <groupId>org.apache.kafka</groupId>
+ <artifactId>kafka-clients</artifactId>
+ <version>0.10.2.0</version>
+</dependency>
 
 <dependency>
      <groupId>net.sourceforge.nekohtml</groupId>

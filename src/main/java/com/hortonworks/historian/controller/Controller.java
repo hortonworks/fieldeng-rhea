@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -46,6 +47,18 @@ public class Controller{
 	@Value("${historian.api.port}")
 	private String historianApiPort;
 	
+	//@Value("${kafka.host}")
+	private String kafkaHost;
+		
+	//@Value("${kafka.port}")
+	private String kafkaPort;
+		
+	//@Value("${zk.host}")
+	private String zkHost;
+		
+	//@Value("${zk.port}")
+	private String zkPort;
+	
 	private String server = "http://"+historianApiHost+":"+historianApiPort;
 	
 	public Controller() {
@@ -56,6 +69,7 @@ public class Controller{
         if(env.get("API_PORT") != null){
         	historianApiPort = (String)env.get("API_PORT");
         }
+        
         server = "http://"+historianApiHost+":"+historianApiPort;
         System.out.println("********************** Controller ()  API url set tp: " + server);
 	}
@@ -176,7 +190,6 @@ public class Controller{
 	        	tsList.add(objRow);
         	}
         	count++;
-        	
         }
         
         System.out.println(response.getBody());
@@ -344,8 +357,6 @@ public class Controller{
         String[] matchesArr = dd[1].split(Pattern.quote("],"));
        
         for (String match : matchesArr) {
-        	 	
-        	
         	String[] cols = match.split(Pattern.quote("|"));
         	for (String col : cols) {
         		List<List> matches = new ArrayList<List>(); 	
@@ -364,12 +375,8 @@ public class Controller{
         		}
         		System.out.println(col);
         		allMatches.add(matches);
-        	}
-        	
-        	
+        	}	
         }
-        
-	      //String array = 	dd[1].substring(0, dd[1].length() -5 ) + "]";
     	return allMatches;
     }
  
@@ -412,27 +419,69 @@ public class Controller{
         ResponseEntity<String> response = rt.getForEntity(url, String.class);
         
         if (response.getBody() != null && !response.getBody().isEmpty()) {
-        String[] ds = response.getBody().split(Pattern.quote("\n"));
-        int count =0;
-        for (String row : ds) {
-        	if (count > 0) {
-        		Object[] objRow = new Object[2];	
+        	String[] ds = response.getBody().split(Pattern.quote("\n"));
+        	int count =0;
+        	for (String row : ds) {
+        		if (count > 0) {
+        			Object[] objRow = new Object[2];	
         		
-	        	System.out.println(row);
-	        	String[] cols = row.split(Pattern.quote(","));	        	
-	        	Date d  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(cols[0]);
-	        	objRow[0] = d.getTime();
-	        	objRow[1] = Double.parseDouble(cols[1]);
-	        	tsList.add(objRow);
+        			System.out.println(row);
+        			String[] cols = row.split(Pattern.quote(","));	        	
+        			Date d  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(cols[0]);
+        			objRow[0] = d.getTime();
+        			objRow[1] = Double.parseDouble(cols[1]);
+        			tsList.add(objRow);
+        		}
+        		count++;
         	}
-        	count++;
-        	
-        }
         }
         //System.out.println(response.getBody());
         return tsList;
     }
     
+    private List<Map<String, Object>> updateFileTree(String entityName, String entityType, String fullPath, String operationType, String targetLeaf, List<Map<String,Object>> currentNode){
+		boolean isTargetLeaf = false;
+		String currentBranch;
+		if(targetLeaf.contains(".")){
+			currentBranch = targetLeaf.split("\\.")[0];
+		}else{
+			isTargetLeaf = true;
+			currentBranch = targetLeaf;
+		}
+		
+		Iterator<Map<String, Object>> nodeIterator = currentNode.iterator();
+		List<Map<String,Object>> updatedNode = new ArrayList<Map<String,Object>>(); 
+		while(nodeIterator.hasNext()){
+			HashMap<String,Object>currentLeaf = (HashMap<String, Object>) nodeIterator.next();
+			if(currentLeaf.get("text").toString().equalsIgnoreCase(currentBranch)){
+				if(isTargetLeaf){
+					Map<String,Object> entity = new HashMap<String,Object>();
+					entity.put("id", fullPath);
+					entity.put("text", entityName);
+					entity.put("type", entityType);
+					if(currentLeaf.containsKey("children")){
+						updatedNode = ((List<Map<String,Object>>)currentLeaf.get("children"));
+					}else{
+						currentLeaf.put("children", new ArrayList<Map<String,Object>>());
+						updatedNode = ((List<Map<String,Object>>)currentLeaf.get("children"));
+					}
+					System.out.println(entity);
+					if(operationType.equalsIgnoreCase("add")){
+						updatedNode.add(entity);
+					}else if(operationType.equalsIgnoreCase("remove")){
+						updatedNode.remove(updatedNode.indexOf(entity));
+					}
+					return updatedNode;
+				}else{
+					targetLeaf = targetLeaf.split(currentBranch+".")[1];
+					System.out.println(targetLeaf);
+					List<Map<String,Object>> nextLeaf = (List<Map<String,Object>>)currentLeaf.get("children");
+					updatedNode = updateFileTree(entityName, entityType, fullPath, operationType, targetLeaf, nextLeaf);	
+				}
+			}
+		}
+		return updatedNode;
+	}
     
     @RequestMapping(value="/getpattern", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
     public List<Object[]>  getPattern(
@@ -517,7 +566,6 @@ public class Controller{
 	        	tsList.add(objRow);
         	}
         	count++;
-        	
         }
         
         System.out.println(response.getBody());
@@ -525,34 +573,66 @@ public class Controller{
         return tsList;
     }
 
-    
-    
     @RequestMapping(value="/getfiletree", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
     public HashMap<String, Object>  getFileTree() {
     
     	return Atlas.atlasFileTree;
-    	/*
-    	
-    	HashMap<String, Object> coreHm = new HashMap<String, Object>();
-    	HashMap<String, Object> dataHm = new HashMap<String, Object>();
-    	List<Object> data = new ArrayList<Object>();
-    	//data.add("Empty Folder");    	
-       	
-    	RestTemplate restTemplate = new RestTemplate();
-    	
-    	restTemplate.getInterceptors().add(
-    			  new BasicAuthorizationInterceptor("admin", "admin"));  	
-
-    	data = callAtlas("http://172.26.247.24:21000/api/atlas/v1/taxonomies/", restTemplate, data);
-    	
-    	dataHm.put("data", data);
-    	coreHm.put("core", dataHm);   	
-    	    	
-    	return coreHm;
-    	*/
     }
     
-
+    @RequestMapping(value="/createTerm", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
+    public void createTerm(@RequestParam("path") String targetLeaf, @RequestParam("termName") String termName) {
+    	Atlas.createTerm(targetLeaf.replaceAll("\\.","/terms/"), termName);
+    	List<Map<String,Object>> currentNode = (List<Map<String, Object>>) ((HashMap)Atlas.atlasFileTree.get("core")).get("data");
+    	String fullPath = targetLeaf;
+    	targetLeaf = String.join(".", Arrays.copyOf(targetLeaf.split("\\."), targetLeaf.split("\\.").length-1));
+    	System.out.println(termName);
+    	System.out.println(targetLeaf);
+    	System.out.println(currentNode);
+    	updateFileTree(termName, "folder", fullPath, "add", targetLeaf, currentNode);
+    }
+    
+    @RequestMapping(value="/deleteTerm", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
+    public void deleteTerm(@RequestParam("path") String targetLeaf, @RequestParam("termName") String termName) {
+    	Atlas.deleteTerm(targetLeaf.replaceAll("\\.","/terms/"), termName);
+    	List<Map<String,Object>> currentNode = (List<Map<String, Object>>) ((HashMap)Atlas.atlasFileTree.get("core")).get("data");
+    	String fullPath = targetLeaf;
+    	targetLeaf = String.join(".", Arrays.copyOf(targetLeaf.split("\\."), targetLeaf.split("\\.").length-1));
+    	System.out.println(termName);
+    	System.out.println(targetLeaf);
+    	System.out.println(currentNode);
+    	updateFileTree(termName, "folder", fullPath, "remove", targetLeaf, currentNode);
+    }
+    
+    @RequestMapping(value="/moveNode", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE})
+    public void moveNode(@RequestParam("nodeName") String nodeName, @RequestParam("type") String type, @RequestParam("oldPath") String oldPath, @RequestParam("newPath") String newPath) {
+    	String targetLeaf = oldPath; 
+    	if(type.equalsIgnoreCase("tag")){
+    		Atlas.removeTerm(targetLeaf, nodeName);
+    	}else if(type.equalsIgnoreCase("folder")){
+    		Atlas.deleteTerm(targetLeaf.replaceAll("\\.","/terms/"), nodeName);
+    	}
+    	List<Map<String,Object>> currentNode = (List<Map<String, Object>>) ((HashMap)Atlas.atlasFileTree.get("core")).get("data");
+    	String fullPath = targetLeaf+"."+nodeName;
+    	//targetLeaf = String.join(".", Arrays.copyOf(targetLeaf.split("\\."), targetLeaf.split("\\.").length-1));
+    	System.out.println(nodeName);
+    	System.out.println(targetLeaf);
+    	System.out.println(currentNode);
+    	updateFileTree(nodeName, type, fullPath, "remove", targetLeaf, currentNode);
+    	
+    	targetLeaf = newPath; 
+    	if(type.equalsIgnoreCase("tag")){
+    		Atlas.applyTerm(targetLeaf, nodeName);
+    	}else if(type.equalsIgnoreCase("folder")){
+    		Atlas.createTerm(targetLeaf.replaceAll("\\.","/terms/"), nodeName);
+    	}
+    	currentNode = (List<Map<String, Object>>) ((HashMap)Atlas.atlasFileTree.get("core")).get("data");
+    	fullPath = targetLeaf+"."+nodeName;
+    	//targetLeaf = String.join(".", Arrays.copyOf(targetLeaf.split("\\."), targetLeaf.split("\\.").length-1));
+    	System.out.println(nodeName);
+    	System.out.println(targetLeaf);
+    	System.out.println(currentNode);
+    	updateFileTree(nodeName, type, fullPath, "add", targetLeaf, currentNode);
+    }
     
     private List<Object> callAtlas (String url, RestTemplate rt, List<Object> data) {
     	rt.setMessageConverters(Arrays.asList(new MappingJackson2HttpMessageConverter()));
@@ -578,16 +658,4 @@ public class Controller{
         // need exit condition
 		return data;
     }
-
-    
-    /*HashMap<String, Object> folderHm = new HashMap<String, Object>();
-	folderHm.put("text", "resources");
-	data.add(folderHm);
-	
-	HashMap<String, Object> openClose = new HashMap<String, Object>();
-	openClose.put("opened", true);
-	folderHm.put("state", openClose);
-	
-	List<Object> children = new ArrayList<Object>();
-	folderHm.put("children", children);*/
 }

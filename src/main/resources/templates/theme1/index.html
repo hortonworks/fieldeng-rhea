@@ -277,43 +277,7 @@ changeCheckbox.onchange = function() {
 </style>
 
 <script>
-    $(document).ready(function(){
-
-        $('#jstree1').jstree({
-            'core' : {
-                'check_callback' : true
-            },
-            'plugins' : [ 'types', 'dnd' ],
-            'types' : {
-                'default' : {
-                    'icon' : 'fa fa-folder'
-                },
-                'html' : {
-                    'icon' : 'fa fa-file-code-o'
-                },
-                'svg' : {
-                    'icon' : 'fa fa-file-picture-o'
-                },
-                'css' : {
-                    'icon' : 'fa fa-file-code-o'
-                },
-                'img' : {
-                    'icon' : 'fa fa-file-image-o'
-                },
-                'js' : {
-                    'icon' : 'fa fa-file-text-o'
-                }
-
-            }
-        });
-
-
-    });
-</script>
-
-<script>
-					
-						
+											
 $(function () {
 	var to = false;
 	$('#demo_q').keyup(function () {
@@ -351,43 +315,101 @@ $.get("/getfiletree", function(tree) {
 	
 	//tree1.core = { label: "Hello", url: "#hello" };
 	$.extend(tree, {
-		'plugins' : [ 'types', 'dnd', 'search' ],
+		'plugins' : [ 'types', 'dnd', 'search','contextmenu'],
+		'dnd' : {
+	        		'is_draggable' : function (nodes, e) { 
+	  					console.log(nodes)
+	  					if(nodes[0].original.type=="tag"){
+	    					return true;
+	        			}else{
+	  						return false;
+	        			}
+					}
+		},
         'types' : {
             'default' : {
                 'icon' : 'fa fa-folder'
             },
-            'html' : {
-                'icon' : 'fa fa-file-code-o'
+            'folder' : {
+                'icon' : 'fa fa-folder'
             },
-            'svg' : {
-                'icon' : 'fa fa-file-picture-o'
-            },
-            'css' : {
-                'icon' : 'fa fa-file-code-o'
-            },
-            'img' : {
-                'icon' : 'fa fa-file-image-o'
-            },
-            'js' : {
-                'icon' : 'fa fa-file-text-o'
+            'tag' : {
+                'icon' : 'glyphicon glyphicon-stats'
+            }
+        },
+        "contextmenu":{         
+            "items": function(node) {
+                var treeRef = $("#using_json").jstree(true);
+                return {
+                    "Create": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "label": "Create Classification",
+                        "action": function (obj) { 
+                        	console.log(node)
+                        	childNode = treeRef.create_node(node,{'id': node.id+'.___','children': [],'type':'folder'});
+                        	treeRef.edit(childNode);
+                        }
+                    }
+                };
             }
         }
 	});
 	
 	$('#using_json').on("select_node.jstree", function (e, data) { 
 				console.log("node: " + data.node.text);
+				console.log("node path: " + data.node.id);
 				tagsG = data.node.text;
-				var elem =document.getElementById('checkbox0');
-				getTsFunction(elem, 0, "sum"); //  "2017-04-23_00:00:00", "2017-05-03_00:00:00", "sum", "minute");
-				
+				if(data.node.type=='tag'){
+					var elem =document.getElementById('checkbox0');
+					getTsFunction(elem, 0, "sum"); //  "2017-04-23_00:00:00", "2017-05-03_00:00:00", "sum", "minute");
+				}
 	}); 
 	
-	 $('#using_json').jstree(tree);
+	$('#using_json').on('rename_node.jstree', function(e, data) {
+    	console.log(data);
+    	var nodeId = data.node.id;
+    	var nodeName = data.node.text;
+    	var updatedId = nodeId.replace("___", nodeName)
+    	data.node.id = updatedId
+    	data.node.children = []
+    	console.log(data.node)
+    	var path = updatedId
+    	$.get("/createTerm?path="+path+"&termName="+nodeName, function(data){});
+	});
+	
+	$('#using_json').jstree(tree).bind("move_node.jstree", function (e, data) {
+		console.log(data)
+		if(data.node.type=='tag'){
+			$.get("/moveNode?nodeName="+data.node.text+"&type="+data.node.type+"&oldPath="+data.old_parent+"&newPath="+data.parent, function(data){});
+		}else{
+			alert("Only tags can moved between folders")
+		}
+	});
 });
 
+/*
+function customMenu(node) {
+    // The default set of all items
+    var items = {
+        renameItem: { // The "rename" menu item
+            label: "Rename",
+            action: function () {...}
+        },
+        deleteItem: { // The "delete" menu item
+            label: "Delete",
+            action: function () {...}
+        }
+    };
 
+    if ($(node).hasClass("folder")) {
+        // Delete the "delete" menu item
+        delete items.deleteItem;
+    }
 
-
+    return items;
+}
+*/
 function getTsFunction(elem, i, func) {
 		
 	

@@ -45,7 +45,7 @@ public class AtlasObserver implements Runnable {
 		try {
 			consumer.subscribe(topics);
 			while (true) {
-				ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
+				ConsumerRecords<String, String> records = consumer.poll(100);
 	        
 				for (ConsumerRecord<String, String> record : records) {
 					Map<String, Object> data = new HashMap<>();

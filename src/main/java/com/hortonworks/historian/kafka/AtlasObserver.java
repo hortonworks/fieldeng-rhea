@@ -68,7 +68,7 @@ public class AtlasObserver implements Runnable {
 					System.out.println(operationType);
 
 					System.out.println("********** Move Entity to Specified Classification...");	
-					System.out.println("********** Entity Reported Classificaition: " + traitArray);
+					System.out.println("********** Entity Reported Classification: " + traitArray);
 					System.out.println("********** Current Tag Classificaiton Mapping: " + Atlas.tagsTaxMapping);
 					String targetLeaf = null;
 					if(typeName.equalsIgnoreCase(typeName) && operationType.equalsIgnoreCase("TRAIT_ADD")){
@@ -94,7 +94,6 @@ public class AtlasObserver implements Runnable {
 							System.out.println("********** Detecting Deleted Classification: " + Atlas.tagsTaxMapping.get(entityName));
 							targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
 						}else if(traitArray.size() == 0){
-							System.out.println("********** This tag does not have any relevant Classificaitons applied, skipping Delete...");
 							targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
 						}else{
 							System.out.println("********** There are no Classifications assigned to this tag, skipping Delete...");

@@ -469,7 +469,9 @@ public class Controller{
 					if(operationType.equalsIgnoreCase("add")){
 						updatedNode.add(entity);
 					}else if(operationType.equalsIgnoreCase("remove")){
-						updatedNode.remove(updatedNode.indexOf(entity));
+						if(updatedNode.indexOf(entity) > -1){
+							updatedNode.remove(updatedNode.indexOf(entity));
+						}
 					}
 					return updatedNode;
 				}else{

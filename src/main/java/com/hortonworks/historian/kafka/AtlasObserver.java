@@ -69,7 +69,7 @@ public class AtlasObserver implements Runnable {
 
 					System.out.println("********** Move Entity to Specified Classification...");	
 					System.out.println("********** Entity Reported Classification: " + traitArray);
-					System.out.println("********** Current Tag Classificaiton Mapping: " + Atlas.tagsTaxMapping);
+					System.out.println("********** Current Tag Classification Mapping: " + Atlas.tagsTaxMapping);
 					String targetLeaf = null;
 					if(typeName.equalsIgnoreCase(typeName) && operationType.equalsIgnoreCase("TRAIT_ADD")){
 						if(Atlas.tagsTaxMapping.containsKey(entityName) && traitArray.size() > 0){	
@@ -81,7 +81,7 @@ public class AtlasObserver implements Runnable {
 								System.out.println("********** The requested Classification has already been assigned to this tag, skipping Apply...");
 								skipFlag = true;
 							}
-						}else if(!Atlas.tagsTaxMapping.containsKey(entityName)){
+						}else if(!Atlas.tagsTaxMapping.containsKey(entityName) && traitArray.size() > 0){
 							System.out.println("********** This tag does not have any relevant Classifications applied, Applying...");
 							targetLeaf = traitArray.get(0);
 						}else{
@@ -93,7 +93,7 @@ public class AtlasObserver implements Runnable {
 							((Collection<?>) Atlas.tagsTaxMapping.get(entityName)).removeAll(traitArray);
 							System.out.println("********** Detecting Deleted Classification: " + Atlas.tagsTaxMapping.get(entityName));
 							targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
-						}else if(traitArray.size() == 0){
+						}else if(traitArray.size() == 0 && Atlas.tagsTaxMapping.containsKey(entityName)){
 							targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
 						}else{
 							System.out.println("********** There are no Classifications assigned to this tag, skipping Delete...");

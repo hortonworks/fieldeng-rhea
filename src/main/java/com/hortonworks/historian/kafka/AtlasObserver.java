@@ -82,7 +82,8 @@ public class AtlasObserver implements Runnable {
 								skipFlag = true;
 							}
 						}else if(!Atlas.tagsTaxMapping.containsKey(entityName)){
-							System.out.println("********** This tag does not have any relevant Classificaitons applied, Applying...");
+							System.out.println("********** This tag does not have any relevant Classifications applied, Applying...");
+							targetLeaf = traitArray.get(0);
 						}else{
 							System.out.println("********** The requested Classification has already been assigned to this tag, skipping Apply...");
 							skipFlag = true;
@@ -94,6 +95,7 @@ public class AtlasObserver implements Runnable {
 							targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
 						}else if(traitArray.size() == 0){
 							System.out.println("********** This tag does not have any relevant Classificaitons applied, skipping Delete...");
+							targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
 						}else{
 							System.out.println("********** There are no Classifications assigned to this tag, skipping Delete...");
 							skipFlag = true;

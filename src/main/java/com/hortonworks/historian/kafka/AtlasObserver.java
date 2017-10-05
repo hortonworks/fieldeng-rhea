@@ -92,8 +92,10 @@ public class AtlasObserver implements Runnable {
 							 + e.getMessage());
 		} catch (WakeupException e){
 			System.out.println(" Kafka Consumer Wakeup Exception... " + e.getMessage());
+		} catch (Exception e){
+			e.printStackTrace();	
 		}finally {
-			consumer.close();
+			//consumer.close();
 	    }
 	}
 	

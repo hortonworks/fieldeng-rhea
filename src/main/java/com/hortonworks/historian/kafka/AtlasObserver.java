@@ -41,6 +41,7 @@ public class AtlasObserver implements Runnable {
 	  
 	@Override
 	public void run() {
+		boolean skipFlag = false;
 		try {
 			consumer.subscribe(topics);
 			while (true) {
@@ -77,16 +78,20 @@ public class AtlasObserver implements Runnable {
 					}else if(typeName.equalsIgnoreCase(typeName) && operationType.equalsIgnoreCase("TRAIT_DELETE")){
 						if(traitArray.size() > 0){
 							((Collection<?>) Atlas.tagsTaxMapping.get(entityName)).removeAll(traitArray);
-							System.out.println("********** Detecting Deleted Classificaition: " + Atlas.tagsTaxMapping.get(entityName));
+							System.out.println("********** Detecting Deleted Classification: " + Atlas.tagsTaxMapping.get(entityName));
 							targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
 						}else{
 							System.out.println("********** There are no Classifications assigned to this tag, skipping delete...");
+							skipFlag = true;
 						}
 					}
-						
-					List<Map<String,Object>> currentNode = (List<Map<String, Object>>) ((HashMap)Atlas.atlasFileTree.get("core")).get("data");
-					System.out.println("********** Updated File Tree: "+updateFileTree(entityName, targetLeaf+"."+entityName, targetLeaf, currentNode, operationType));
-					Atlas.tagsTaxMapping.put(entityName, traitArray);					
+					
+					if(skipFlag == false){	
+						List<Map<String,Object>> currentNode = (List<Map<String, Object>>) ((HashMap)Atlas.atlasFileTree.get("core")).get("data");
+						System.out.println("********** Updated File Tree: "+updateFileTree(entityName, targetLeaf+"."+entityName, targetLeaf, currentNode, operationType));
+						Atlas.tagsTaxMapping.put(entityName, traitArray);
+					}
+					skipFlag = false;
 				}	
 			}
 		} catch (JSONException e) {

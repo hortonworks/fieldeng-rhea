@@ -72,10 +72,12 @@ public class AtlasObserver implements Runnable {
 					System.out.println("********** Current Tag Classificaiton Mapping: " + Atlas.tagsTaxMapping);
 					String targetLeaf = null;
 					if(typeName.equalsIgnoreCase(typeName) && operationType.equalsIgnoreCase("TRAIT_ADD")){
-						traitArray.removeAll((Collection<?>) Atlas.tagsTaxMapping.get(entityName));
-						System.out.println("********** Detecting Added Classificaition: " + traitArray);
-						if(traitArray.size() > 0){
+						if(Atlas.tagsTaxMapping.containsKey(entityName) && traitArray.size() > 0){	
+							traitArray.removeAll((Collection<?>) Atlas.tagsTaxMapping.get(entityName));
+							System.out.println("********** Detecting Added Classificaition: " + traitArray);
 							targetLeaf = traitArray.get(0);
+						}if(!Atlas.tagsTaxMapping.containsKey(entityName)){
+							System.out.println("********** This tag does not have any relevant Classificaitons applied, Applying...");
 						}else{
 							System.out.println("********** The requested Classification has already been assigned to this tag, skipping Apply...");
 							skipFlag = true;

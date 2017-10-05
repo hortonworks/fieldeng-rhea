@@ -467,7 +467,9 @@ public class Controller{
 					}
 					System.out.println(entity);
 					if(operationType.equalsIgnoreCase("add")){
-						updatedNode.add(entity);
+						if(updatedNode.indexOf(entity) == -1){
+							updatedNode.add(entity);
+						}
 					}else if(operationType.equalsIgnoreCase("remove")){
 						if(updatedNode.indexOf(entity) > -1){
 							updatedNode.remove(updatedNode.indexOf(entity));

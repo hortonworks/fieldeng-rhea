@@ -151,7 +151,9 @@ public class AtlasObserver implements Runnable {
 						updatedNode = ((List<Map<String,Object>>)currentLeaf.get("children"));
 					}
 					if(operationType.equalsIgnoreCase("TRAIT_ADD")){
-						updatedNode.add(entity);
+						if(updatedNode.indexOf(entity) == -1){
+							updatedNode.add(entity);
+						}
 					}else if(operationType.equalsIgnoreCase("TRAIT_DELETE")){
 						if(updatedNode.indexOf(entity) > -1){
 							updatedNode.remove(updatedNode.indexOf(entity));

@@ -1,6 +1,5 @@
 package com.hortonworks.historian.kafka;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,8 +17,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hortonworks.historian.model.Atlas;
 
@@ -88,10 +85,15 @@ public class AtlasObserver implements Runnable {
 					Atlas.tagsTaxMapping.put(entityName, traitArray);					
 				}	
 			}
-	    }catch (Exception e){
-	    	e.printStackTrace();
-		} finally {
-	      consumer.close();
+		} catch (JSONException e) {
+			System.out.println("There was a problem parsing the incoming JSON event. "
+							 + "This is could be because a UI interaction was replayed as an event. "
+							 + "If so, it's safe to ignore this message. \n"
+							 + e.getMessage());
+		} catch (WakeupException e){
+			System.out.println(" Kafka Consumer Wakeup Exception... " + e.getMessage());
+		}finally {
+			consumer.close();
 	    }
 	}
 	

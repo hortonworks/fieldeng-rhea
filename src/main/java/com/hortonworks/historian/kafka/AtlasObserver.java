@@ -81,17 +81,19 @@ public class AtlasObserver implements Runnable {
 								System.out.println("********** The requested Classification has already been assigned to this tag, skipping Apply...");
 								skipFlag = true;
 							}
-						}if(!Atlas.tagsTaxMapping.containsKey(entityName)){
+						}else if(!Atlas.tagsTaxMapping.containsKey(entityName)){
 							System.out.println("********** This tag does not have any relevant Classificaitons applied, Applying...");
 						}else{
 							System.out.println("********** The requested Classification has already been assigned to this tag, skipping Apply...");
 							skipFlag = true;
 						}
 					}else if(typeName.equalsIgnoreCase(typeName) && operationType.equalsIgnoreCase("TRAIT_DELETE")){
-						if(traitArray.size() > 0){
+						if(Atlas.tagsTaxMapping.containsKey(entityName) && traitArray.size() > 0){
 							((Collection<?>) Atlas.tagsTaxMapping.get(entityName)).removeAll(traitArray);
 							System.out.println("********** Detecting Deleted Classification: " + Atlas.tagsTaxMapping.get(entityName));
 							targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
+						}else if(!Atlas.tagsTaxMapping.containsKey(entityName)){
+							System.out.println("********** There are no Classifications assigned to this tag, skipping Delete...");
 						}else{
 							System.out.println("********** There are no Classifications assigned to this tag, skipping Delete...");
 							skipFlag = true;

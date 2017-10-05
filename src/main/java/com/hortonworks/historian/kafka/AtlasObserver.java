@@ -92,8 +92,8 @@ public class AtlasObserver implements Runnable {
 							((Collection<?>) Atlas.tagsTaxMapping.get(entityName)).removeAll(traitArray);
 							System.out.println("********** Detecting Deleted Classification: " + Atlas.tagsTaxMapping.get(entityName));
 							targetLeaf = ((List)Atlas.tagsTaxMapping.get(entityName)).get(0).toString();
-						}else if(!Atlas.tagsTaxMapping.containsKey(entityName)){
-							System.out.println("********** There are no Classifications assigned to this tag, skipping Delete...");
+						}else if(traitArray.size() == 0){
+							System.out.println("********** This tag does not have any relevant Classificaitons applied, skipping Delete...");
 						}else{
 							System.out.println("********** There are no Classifications assigned to this tag, skipping Delete...");
 							skipFlag = true;

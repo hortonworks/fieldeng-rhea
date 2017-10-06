@@ -88,6 +88,13 @@ public class AtlasObserver implements Runnable {
 							System.out.println("********** The requested Classification has already been assigned to this tag, skipping Apply...");
 							skipFlag = true;
 						}
+						
+						if(skipFlag == false){	
+							List<Map<String,Object>> currentNode = (List<Map<String, Object>>) ((HashMap)Atlas.atlasFileTree.get("core")).get("data");
+							System.out.println("********** Updated File Tree: "+updateFileTree(entityName, targetLeaf+"."+entityName, targetLeaf, currentNode, operationType));
+							Atlas.tagsTaxMapping.put(entityName, traitArray);
+						}
+						skipFlag = false;
 					}else if(typeName.equalsIgnoreCase(typeName) && operationType.equalsIgnoreCase("TRAIT_DELETE")){
 						if(Atlas.tagsTaxMapping.containsKey(entityName) && traitArray.size() > 0){
 							((Collection<?>) Atlas.tagsTaxMapping.get(entityName)).removeAll(traitArray);
@@ -99,14 +106,14 @@ public class AtlasObserver implements Runnable {
 							System.out.println("********** There are no Classifications assigned to this tag, skipping Delete...");
 							skipFlag = true;
 						}
+						
+						if(skipFlag == false){	
+							List<Map<String,Object>> currentNode = (List<Map<String, Object>>) ((HashMap)Atlas.atlasFileTree.get("core")).get("data");
+							System.out.println("********** Updated File Tree: "+updateFileTree(entityName, targetLeaf+"."+entityName, targetLeaf, currentNode, operationType));
+							Atlas.tagsTaxMapping.put(entityName, traitArray);
+						}
+						skipFlag = false;
 					}
-					
-					if(skipFlag == false){	
-						List<Map<String,Object>> currentNode = (List<Map<String, Object>>) ((HashMap)Atlas.atlasFileTree.get("core")).get("data");
-						System.out.println("********** Updated File Tree: "+updateFileTree(entityName, targetLeaf+"."+entityName, targetLeaf, currentNode, operationType));
-						Atlas.tagsTaxMapping.put(entityName, traitArray);
-					}
-					skipFlag = false;
 				}	
 			}
 		} catch (JSONException e) {

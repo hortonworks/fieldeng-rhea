@@ -56,22 +56,24 @@ public class AtlasObserver implements Runnable {
 					
 					JSONObject message = new JSONObject(record.value());
 					String typeName = message.getJSONObject("message").getJSONObject("entity").getString("typeName");
-					String entityName = message.getJSONObject("message").getJSONObject("entity").getJSONObject("values").getString("name");
 					String operationType = message.getJSONObject("message").getString("operationType");
-					JSONArray jsonTraitArray = message.getJSONObject("message").getJSONObject("entity").getJSONArray("traitNames");
-					List<String> traitArray = new ArrayList<String>();
-					for (int i=0; i < jsonTraitArray.length(); i++) {
-					    traitArray.add(jsonTraitArray.getString(i));
-					}
-					System.out.println(typeName);
-					System.out.println(entityName);
-					System.out.println(operationType);
+					
+					System.out.println("********** Entity Type: "+typeName);
+					System.out.println("********** Operation Type: "+operationType);
 
-					System.out.println("********** Move Entity to Specified Classification...");	
-					System.out.println("********** Entity Reported Classification: " + traitArray);
-					System.out.println("********** Current Tag Classification Mapping: " + Atlas.tagsTaxMapping);
 					String targetLeaf = null;
 					if(typeName.equalsIgnoreCase(typeName) && operationType.equalsIgnoreCase("TRAIT_ADD")){
+						String entityName = message.getJSONObject("message").getJSONObject("entity").getJSONObject("values").getString("name");
+						JSONArray jsonTraitArray = message.getJSONObject("message").getJSONObject("entity").getJSONArray("traitNames");
+						List<String> traitArray = new ArrayList<String>();
+						for (int i=0; i < jsonTraitArray.length(); i++) {
+						    traitArray.add(jsonTraitArray.getString(i));
+						}
+						
+						System.out.println("********** Entity Name: "+entityName);
+						System.out.println("********** Entity Reported Classification: " + traitArray);
+						System.out.println("********** Current Tag Classification Mapping: " + Atlas.tagsTaxMapping);
+						
 						if(Atlas.tagsTaxMapping.containsKey(entityName) && traitArray.size() > 0){	
 							traitArray.removeAll((Collection<?>) Atlas.tagsTaxMapping.get(entityName));
 							System.out.println("********** Detecting Added Classificaition: " + traitArray);
@@ -96,6 +98,17 @@ public class AtlasObserver implements Runnable {
 						}
 						skipFlag = false;
 					}else if(typeName.equalsIgnoreCase(typeName) && operationType.equalsIgnoreCase("TRAIT_DELETE")){
+						String entityName = message.getJSONObject("message").getJSONObject("entity").getJSONObject("values").getString("name");
+						JSONArray jsonTraitArray = message.getJSONObject("message").getJSONObject("entity").getJSONArray("traitNames");
+						List<String> traitArray = new ArrayList<String>();
+						for (int i=0; i < jsonTraitArray.length(); i++) {
+						    traitArray.add(jsonTraitArray.getString(i));
+						}
+						
+						System.out.println("********** Entity Name: "+entityName);
+						System.out.println("********** Entity Reported Classification: " + traitArray);
+						System.out.println("********** Current Tag Classification Mapping: " + Atlas.tagsTaxMapping);
+						
 						if(Atlas.tagsTaxMapping.containsKey(entityName) && traitArray.size() > 0){
 							((Collection<?>) Atlas.tagsTaxMapping.get(entityName)).removeAll(traitArray);
 							System.out.println("********** Detecting Deleted Classification: " + Atlas.tagsTaxMapping.get(entityName));
@@ -113,6 +126,8 @@ public class AtlasObserver implements Runnable {
 							Atlas.tagsTaxMapping.put(entityName, traitArray);
 						}
 						skipFlag = false;
+					}else{
+						System.out.println("********** Event is not relevant, ignoring...");
 					}
 				}	
 			}
